@@ -1,16 +1,24 @@
 # TypeFlip
 
-Minimal Windows desktop text conversion utility.
+TypeFlip is a simple Windows tool for converting English and Persian text.
 
-## Structure
+## Shortcut
 
-- `src/` - application code and entry point
-- `assets/` - optional packaged assets such as icons
-- `config/` - default and runtime JSON settings
-- `build/` - PyInstaller work files and spec output
-- `dist/` - final packaged executable
-- `logs/` - runtime logs
+- `F12` converts the selected text in the active window.
+
+## Run
+
+Run `run.bat` to start the app.
 
 ## Build
 
-Run `build.bat` on Windows to install dependencies, clean previous artifacts, and generate `dist\TypeFlip.exe`.
+Run `build.bat` to build the `exe` file.
+
+## Structure
+
+- `src/` main application code
+- `config/` settings
+- `assets/` optional files
+- `build/` temporary build files
+- `dist/` final output
+- `logs/` app logs
