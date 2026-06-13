@@ -1,0 +1,1 @@
+"""TypeFlip application package."""

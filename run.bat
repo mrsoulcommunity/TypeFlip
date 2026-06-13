@@ -7,9 +7,9 @@ if exist .venv\Scripts\python.exe set "PYTHON=.venv\Scripts\python.exe"
 
 echo Installing required packages...
 %PYTHON% -m pip install --upgrade pip
-%PYTHON% -m pip install keyboard pywin32
+%PYTHON% -m pip install -r requirements.txt
 
 echo.
 echo Launching TypeFlip...
-%PYTHON% TypeFlip.py
+%PYTHON% src\main.py
 pause
