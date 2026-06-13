@@ -45,7 +45,7 @@ echo [4/5] Building executable...
   --distpath "%ROOT%dist" ^
   --workpath "%ROOT%build" ^
   --specpath "%ROOT%build" ^
-  "%ROOT%src\main.py"
+  "%ROOT%typeflip.py"
 if errorlevel 1 goto :build_fail
 
 echo.

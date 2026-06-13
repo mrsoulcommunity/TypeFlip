@@ -15,6 +15,8 @@ import win32clipboard
 import win32con
 import winreg
 
+from .startup import WindowsStartupManager
+
 APP_NAME = "TypeFlip"
 VERSION = "1.3.1"
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -73,41 +75,41 @@ FA_TO_EN.update({
 
 
 class ClipboardManager:
+    _lock = threading.Lock()
+
     @staticmethod
     def get() -> str:
-        for _ in range(10):
-            try:
-                win32clipboard.OpenClipboard()
-                if win32clipboard.IsClipboardFormatAvailable(win32con.CF_UNICODETEXT):
-                    data = win32clipboard.GetClipboardData(win32con.CF_UNICODETEXT)
-                    win32clipboard.CloseClipboard()
-                    return data or ""
-                win32clipboard.CloseClipboard()
-            except Exception:
-                time.sleep(0.015)
-            finally:
+        for attempt in range(10):
+            with ClipboardManager._lock:
                 try:
-                    win32clipboard.CloseClipboard()
+                    win32clipboard.OpenClipboard()
+                    try:
+                        if win32clipboard.IsClipboardFormatAvailable(win32con.CF_UNICODETEXT):
+                            data = win32clipboard.GetClipboardData(win32con.CF_UNICODETEXT)
+                            return data or ""
+                        return ""
+                    finally:
+                        win32clipboard.CloseClipboard()
                 except Exception:
-                    pass
+                    if attempt < 9:
+                        time.sleep(0.015)
         return ""
 
     @staticmethod
     def set(text: str) -> bool:
-        for _ in range(10):
-            try:
-                win32clipboard.OpenClipboard()
-                win32clipboard.EmptyClipboard()
-                win32clipboard.SetClipboardText(text, win32con.CF_UNICODETEXT)
-                win32clipboard.CloseClipboard()
-                return True
-            except Exception:
-                time.sleep(0.015)
-            finally:
+        for attempt in range(10):
+            with ClipboardManager._lock:
                 try:
-                    win32clipboard.CloseClipboard()
+                    win32clipboard.OpenClipboard()
+                    try:
+                        win32clipboard.EmptyClipboard()
+                        win32clipboard.SetClipboardText(text, win32con.CF_UNICODETEXT)
+                        return True
+                    finally:
+                        win32clipboard.CloseClipboard()
                 except Exception:
-                    pass
+                    if attempt < 9:
+                        time.sleep(0.015)
         return False
 
 
@@ -122,7 +124,14 @@ class TextConverter:
     @staticmethod
     def detect(text: str) -> str:
         fa = sum(1 for c in text if "\u0600" <= c <= "\u06FF")
-        return "fa" if fa > len(text) * 0.35 else "en"
+        en = sum(1 for c in text if c.isascii() and c.isalpha())
+        if fa == 0 and en == 0:
+            return "en"
+        if fa >= max(2, en) and fa / max(1, len(text)) > 0.15:
+            return "fa"
+        if en > fa * 1.2:
+            return "en"
+        return "fa" if fa > en else "en"
 
     @staticmethod
     def convert(text: str) -> str:
@@ -140,27 +149,28 @@ class TypeFlip:
         self.debounce_time = 0.35
         self.status_callback = status_callback
         self.log_callback = log_callback
+        self.startup_manager = WindowsStartupManager(APP_NAME)
         self.settings = self.load_settings()
         self.hotkey = self.settings.get("hotkey", "f12")
         self.enabled = bool(self.settings.get("enabled", True))
+        self.startup_enabled = self.startup_manager.is_enabled()
+        self.hotkey_handle = None
 
         self.setup_hotkey()
         logger.info(f"TypeFlip v{VERSION} started")
         self.notify_status()
 
     def default_settings(self) -> dict:
-        return {"hotkey": "f12", "enabled": True}
+        return {"hotkey": "f12", "enabled": True, "startup_enabled": False}
 
     def load_settings(self) -> dict:
         try:
             if SETTINGS_FILE.exists():
                 with SETTINGS_FILE.open("r", encoding="utf-8") as file_handle:
                     return json.load(file_handle)
-
             if LEGACY_SETTINGS_FILE.exists():
                 with LEGACY_SETTINGS_FILE.open("r", encoding="utf-8") as file_handle:
                     return json.load(file_handle)
-
             bundled_default = bundle_root() / "config" / "typeflip.json"
             if bundled_default.exists():
                 with bundled_default.open("r", encoding="utf-8") as file_handle:
@@ -177,7 +187,11 @@ class TypeFlip:
             json.dump(data, file_handle, ensure_ascii=False, indent=2)
 
     def save_settings(self) -> None:
-        self._write_settings_file({"hotkey": self.hotkey, "enabled": self.enabled})
+        self._write_settings_file({
+            "hotkey": self.hotkey,
+            "enabled": self.enabled,
+            "startup_enabled": self.startup_enabled,
+        })
 
     def notify_status(self, message: str | None = None) -> None:
         if self.status_callback:
@@ -190,8 +204,12 @@ class TypeFlip:
 
     def setup_hotkey(self) -> None:
         try:
-            keyboard.unhook_all()
-            keyboard.add_hotkey(self.hotkey, self.trigger_conversion, suppress=False)
+            if self.hotkey_handle is not None:
+                try:
+                    keyboard.remove_hotkey(self.hotkey_handle)
+                except Exception:
+                    pass
+            self.hotkey_handle = keyboard.add_hotkey(self.hotkey, self.trigger_conversion, suppress=False)
             logger.info(f"Global hotkey {self.hotkey.upper()} registered")
         except Exception as exc:
             logger.error(f"Hotkey registration failed: {exc}")
@@ -211,6 +229,18 @@ class TypeFlip:
         self.save_settings()
         self.notify_status()
 
+    def set_startup_enabled(self, enabled: bool) -> bool:
+        desired_state = bool(enabled)
+        success = self.startup_manager.enable() if desired_state else self.startup_manager.disable()
+        if success:
+            self.startup_enabled = self.startup_manager.is_enabled()
+            self.save_settings()
+            self.notify_status()
+            return True
+
+        self.notify_log("Failed to update Windows startup")
+        return False
+
     def trigger_conversion(self) -> None:
         now = time.time()
         if now - self.last_trigger < self.debounce_time:
@@ -222,11 +252,9 @@ class TypeFlip:
 
     def perform_silent_conversion(self) -> None:
         original_clipboard = ClipboardManager.get()
-
         try:
             keyboard.send("ctrl+a")
             time.sleep(0.045)
-
             keyboard.send("ctrl+c")
             time.sleep(0.085)
 
@@ -257,7 +285,9 @@ class TypeFlip:
 
     def shutdown(self) -> None:
         try:
-            keyboard.unhook_all()
+            if self.hotkey_handle is not None:
+                keyboard.remove_hotkey(self.hotkey_handle)
+                self.hotkey_handle = None
         except Exception:
             pass
 
@@ -274,6 +304,7 @@ class TypeFlipUI:
         self.status_var = tk.StringVar(value="Ready")
         self.hotkey_var = tk.StringVar(value=self.app.hotkey)
         self.enabled_var = tk.BooleanVar(value=self.app.enabled)
+        self.startup_var = tk.BooleanVar(value=self.app.startup_enabled)
         self.log_var = tk.StringVar(value="Ready")
         self.tray_icon = None
         self.tray_thread = None
@@ -313,6 +344,7 @@ class TypeFlipUI:
         settings = ttk.Frame(outer, style="Root.TFrame")
         settings.pack(fill="x")
         ttk.Checkbutton(settings, text="Enabled", variable=self.enabled_var, command=self.apply_enabled_state).pack(side="left")
+        ttk.Checkbutton(settings, text="Run at Windows startup", variable=self.startup_var, command=self.apply_startup_state).pack(side="left", padx=(12, 0))
         ttk.Label(settings, text="Hotkey", style="Line.TLabel").pack(side="left", padx=(16, 8))
         ttk.Entry(settings, textvariable=self.hotkey_var, width=10).pack(side="left")
         ttk.Button(settings, text="Apply", style="Flat.TButton", command=self.apply_hotkey).pack(side="left", padx=(8, 0))
@@ -384,12 +416,7 @@ class TypeFlipUI:
             pystray.MenuItem("Show / Restore", lambda icon, item: self.show_window(), default=True),
             pystray.MenuItem("Exit", lambda icon, item: self.exit_app()),
         )
-        self.tray_icon = pystray.Icon(
-            APP_NAME,
-            self.create_tray_image(),
-            APP_NAME,
-            menu,
-        )
+        self.tray_icon = pystray.Icon(APP_NAME, self.create_tray_image(), APP_NAME, menu)
         self.tray_thread = threading.Thread(target=self.tray_icon.run, daemon=True)
         self.tray_thread.start()
 
@@ -452,6 +479,14 @@ class TypeFlipUI:
         self.refresh_status()
         self.push_log("Service enabled" if self.enabled_var.get() else "Service disabled")
 
+    def apply_startup_state(self) -> None:
+        if self.app.set_startup_enabled(self.startup_var.get()):
+            self.startup_var.set(self.app.startup_enabled)
+            self.push_log("Windows startup enabled" if self.startup_var.get() else "Windows startup disabled")
+        else:
+            self.startup_var.set(self.app.startup_enabled)
+            messagebox.showerror(APP_NAME, "Could not update Windows startup.", parent=self.root)
+
     def run_preview_conversion(self) -> None:
         text = self.source_box.get("1.0", "end-1c")
         converted = self.app.convert_text(text)
@@ -472,11 +507,8 @@ class TypeFlipUI:
         self.push_log("Copied")
 
     def add_startup(self) -> None:
-        try:
-            add_to_startup()
-            self.push_log("Startup set")
-        except Exception as exc:
-            messagebox.showerror(APP_NAME, f"Failed to add to startup: {exc}", parent=self.root)
+        self.startup_var.set(True)
+        self.apply_startup_state()
 
     def close(self) -> None:
         self.hide_window()
@@ -485,25 +517,10 @@ class TypeFlipUI:
         self.root.mainloop()
 
 
-def add_to_startup() -> None:
-    try:
-        executable_path = f'"{sys.executable}" "{os.path.abspath(__file__)}"'
-        registry_key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Run",
-            0,
-            winreg.KEY_SET_VALUE,
-        )
-        winreg.SetValueEx(registry_key, APP_NAME, 0, winreg.REG_SZ, executable_path)
-        winreg.CloseKey(registry_key)
-        logger.info("Successfully added to Windows startup")
-    except Exception as exc:
-        logger.error(f"Failed to add to startup: {exc}")
-
-
 def main() -> None:
     if "--startup" in sys.argv:
-        add_to_startup()
+        startup_manager = WindowsStartupManager(APP_NAME)
+        startup_manager.enable()
 
     app = TypeFlip()
     try:

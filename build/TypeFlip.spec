@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['D:\\Project\\BackEnd-TypeFlip\\src\\main.py'],
+    ['D:\\Project\\BackEnd-TypeFlip\\typeflip.py'],
     pathex=['D:\\Project\\BackEnd-TypeFlip\\src'],
     binaries=[],
     datas=[('D:\\Project\\BackEnd-TypeFlip\\config', 'config'), ('D:\\Project\\BackEnd-TypeFlip\\assets', 'assets')],
