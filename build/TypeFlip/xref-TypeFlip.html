@@ -1671,6 +1671,7 @@ imports:
 imported by:
     <a href="#PIL">PIL</a>
  &#8226;   <a href="#PIL.SpiderImagePlugin">PIL.SpiderImagePlugin</a>
+ &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
 
   </div>
 
@@ -4450,6 +4451,7 @@ imported by:
 imports:
     <a href="#_ctypes">_ctypes</a>
  &#8226;   <a href="#ctypes._endian">ctypes._endian</a>
+ &#8226;   <a href="#ctypes.wintypes">ctypes.wintypes</a>
  &#8226;   <a href="#nt">nt</a>
  &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#struct">struct</a>
@@ -4621,7 +4623,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#keyboard._winkeyboard">keyboard._winkeyboard</a>
+    <a href="#ctypes">ctypes</a>
+ &#8226;   <a href="#keyboard._winkeyboard">keyboard._winkeyboard</a>
  &#8226;   <a href="#pystray._util.win32">pystray._util.win32</a>
  &#8226;   <a href="#pystray._win32">pystray._win32</a>
 
@@ -8934,7 +8937,7 @@ imported by:
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
  &#8226;   <a href="#keyboard._keyboard_event">keyboard._keyboard_event</a>
- &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.settings">src.typeflip.settings</a>
 
   </div>
 
@@ -9030,7 +9033,7 @@ imported by:
  &#8226;   <a href="#keyboard._nixcommon">keyboard._nixcommon</a>
  &#8226;   <a href="#keyboard._nixkeyboard">keyboard._nixkeyboard</a>
  &#8226;   <a href="#keyboard._winkeyboard">keyboard._winkeyboard</a>
- &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
 
   </div>
 
@@ -9303,7 +9306,10 @@ imported by:
  &#8226;   <a href="#hashlib">hashlib</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
  &#8226;   <a href="#pystray._base">pystray._base</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
+ &#8226;   <a href="#src.typeflip.logger">src.typeflip.logger</a>
  &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.settings">src.typeflip.settings</a>
  &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
 
   </div>
@@ -9691,7 +9697,6 @@ imported by:
  &#8226;   <a href="#shlex">shlex</a>
  &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#socket">socket</a>
- &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
  &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
  &#8226;   <a href="#ssl">ssl</a>
  &#8226;   <a href="#subprocess">subprocess</a>
@@ -9746,7 +9751,9 @@ imported by:
  &#8226;   <a href="#importlib.resources.readers">importlib.resources.readers</a>
  &#8226;   <a href="#pathlib._abc">pathlib._abc</a>
  &#8226;   <a href="#pathlib._local">pathlib._local</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
  &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.settings">src.typeflip.settings</a>
  &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
  &#8226;   <a href="#zipfile._path">zipfile._path</a>
 
@@ -10845,12 +10852,126 @@ imported by:
 <span class="moduletype">Package</span>  <div class="import">
 imports:
     <a href="#src">src</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+ &#8226;   <a href="#src.typeflip.converter">src.typeflip.converter</a>
+ &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip.clipboard">src.typeflip.clipboard</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+ &#8226;   <a href="#src.typeflip.converter">src.typeflip.converter</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
+ &#8226;   <a href="#src.typeflip.logger">src.typeflip.logger</a>
+ &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.modern">src.typeflip.modern</a>
+ &#8226;   <a href="#src.typeflip.settings">src.typeflip.settings</a>
+ &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.clipboard"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/clipboard.py" type="text/plain"><tt>src.typeflip.clipboard</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#threading">threading</a>
+ &#8226;   <a href="#time">time</a>
+ &#8226;   <a href="#win32clipboard">win32clipboard</a>
+ &#8226;   <a href="#win32con">win32con</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip.engine">src.typeflip.engine</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.config"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/config.py" type="text/plain"><tt>src.typeflip.config</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#pathlib">pathlib</a>
+ &#8226;   <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#sys">sys</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
+ &#8226;   <a href="#src.typeflip.logger">src.typeflip.logger</a>
+ &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.modern">src.typeflip.modern</a>
+ &#8226;   <a href="#src.typeflip.settings">src.typeflip.settings</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.converter"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/converter.py" type="text/plain"><tt>src.typeflip.converter</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#src.typeflip">src.typeflip</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
+ &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.engine"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/engine.py" type="text/plain"><tt>src.typeflip.engine</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#keyboard">keyboard</a>
+ &#8226;   <a href="#logging">logging</a>
+ &#8226;   <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.clipboard">src.typeflip.clipboard</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+ &#8226;   <a href="#src.typeflip.converter">src.typeflip.converter</a>
+ &#8226;   <a href="#src.typeflip.settings">src.typeflip.settings</a>
+ &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
+ &#8226;   <a href="#threading">threading</a>
+ &#8226;   <a href="#time">time</a>
 
   </div>
   <div class="import">
 imported by:
     <a href="#src.typeflip.main">src.typeflip.main</a>
- &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.logger"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/logger.py" type="text/plain"><tt>src.typeflip.logger</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#logging">logging</a>
+ &#8226;   <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip.main">src.typeflip.main</a>
 
   </div>
 
@@ -10864,27 +10985,65 @@ imports:
     <a href="#PIL">PIL</a>
  &#8226;   <a href="#PIL.Image">PIL.Image</a>
  &#8226;   <a href="#PIL.ImageDraw">PIL.ImageDraw</a>
- &#8226;   <a href="#json">json</a>
- &#8226;   <a href="#keyboard">keyboard</a>
+ &#8226;   <a href="#PIL.ImageTk">PIL.ImageTk</a>
  &#8226;   <a href="#logging">logging</a>
- &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#pathlib">pathlib</a>
  &#8226;   <a href="#pystray">pystray</a>
  &#8226;   <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+ &#8226;   <a href="#src.typeflip.converter">src.typeflip.converter</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
+ &#8226;   <a href="#src.typeflip.logger">src.typeflip.logger</a>
+ &#8226;   <a href="#src.typeflip.modern">src.typeflip.modern</a>
  &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#threading">threading</a>
- &#8226;   <a href="#time">time</a>
  &#8226;   <a href="#tkinter">tkinter</a>
  &#8226;   <a href="#tkinter.messagebox">tkinter.messagebox</a>
- &#8226;   <a href="#tkinter.ttk">tkinter.ttk</a>
- &#8226;   <a href="#win32clipboard">win32clipboard</a>
- &#8226;   <a href="#win32con">win32con</a>
 
   </div>
   <div class="import">
 imported by:
     <a href="#src.main">src.main</a>
+ &#8226;   <a href="#src.typeflip">src.typeflip</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.modern"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/modern.py" type="text/plain"><tt>src.typeflip.modern</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+ &#8226;   <a href="#tkinter">tkinter</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip.main">src.typeflip.main</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="src.typeflip.settings"></a>
+  <a target="code" href="///D:/Project/BackEnd-TypeFlip/src/typeflip/settings.py" type="text/plain"><tt>src.typeflip.settings</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#json">json</a>
+ &#8226;   <a href="#logging">logging</a>
+ &#8226;   <a href="#pathlib">pathlib</a>
+ &#8226;   <a href="#src.typeflip">src.typeflip</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.typeflip.engine">src.typeflip.engine</a>
 
   </div>
 
@@ -10906,7 +11065,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#src.typeflip.main">src.typeflip.main</a>
+    <a href="#src.typeflip.engine">src.typeflip.engine</a>
+ &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
 
   </div>
 
@@ -11258,6 +11418,7 @@ imported by:
  &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#six">six</a>
  &#8226;   <a href="#socket">socket</a>
+ &#8226;   <a href="#src.typeflip.config">src.typeflip.config</a>
  &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
  &#8226;   <a href="#src.typeflip.startup">src.typeflip.startup</a>
  &#8226;   <a href="#ssl">ssl</a>
@@ -11416,6 +11577,8 @@ imported by:
  &#8226;   <a href="#pystray._win32">pystray._win32</a>
  &#8226;   <a href="#pystray._xorg">pystray._xorg</a>
  &#8226;   <a href="#queue">queue</a>
+ &#8226;   <a href="#src.typeflip.clipboard">src.typeflip.clipboard</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
  &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#zipfile">zipfile</a>
@@ -11453,7 +11616,8 @@ imported by:
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#queue">queue</a>
  &#8226;   <a href="#random">random</a>
- &#8226;   <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.clipboard">src.typeflip.clipboard</a>
+ &#8226;   <a href="#src.typeflip.engine">src.typeflip.engine</a>
  &#8226;   <a href="#ssl">ssl</a>
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#tarfile">tarfile</a>
@@ -11478,7 +11642,6 @@ imports:
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#tkinter.constants">tkinter.constants</a>
  &#8226;   <a href="#tkinter.messagebox">tkinter.messagebox</a>
- &#8226;   <a href="#tkinter.ttk">tkinter.ttk</a>
  &#8226;   <a href="#traceback">traceback</a>
  &#8226;   <a href="#types">types</a>
 
@@ -11486,10 +11649,10 @@ imports:
   <div class="import">
 imported by:
     <a href="#src.typeflip.main">src.typeflip.main</a>
+ &#8226;   <a href="#src.typeflip.modern">src.typeflip.modern</a>
  &#8226;   <a href="#tkinter.commondialog">tkinter.commondialog</a>
  &#8226;   <a href="#tkinter.constants">tkinter.constants</a>
  &#8226;   <a href="#tkinter.messagebox">tkinter.messagebox</a>
- &#8226;   <a href="#tkinter.ttk">tkinter.ttk</a>
 
   </div>
 
@@ -11534,23 +11697,6 @@ imported by:
 imports:
     <a href="#tkinter">tkinter</a>
  &#8226;   <a href="#tkinter.commondialog">tkinter.commondialog</a>
-
-  </div>
-  <div class="import">
-imported by:
-    <a href="#src.typeflip.main">src.typeflip.main</a>
- &#8226;   <a href="#tkinter">tkinter</a>
-
-  </div>
-
-</div>
-
-<div class="node">
-  <a name="tkinter.ttk"></a>
-  <a target="code" href="///C:/Users/kasra/AppData/Local/Programs/Python/Python313-32/Lib/tkinter/ttk.py" type="text/plain"><tt>tkinter.ttk</tt></a>
-<span class="moduletype">SourceModule</span>  <div class="import">
-imports:
-    <a href="#tkinter">tkinter</a>
 
   </div>
   <div class="import">
@@ -12073,7 +12219,7 @@ imported by:
   <a name="win32clipboard"></a>
   <tt>win32clipboard</tt> <span class="moduletype"><tt>D:\Project\BackEnd-TypeFlip\.venv\Lib\site-packages\win32\win32clipboard.pyd</tt></span>  <div class="import">
 imported by:
-    <a href="#src.typeflip.main">src.typeflip.main</a>
+    <a href="#src.typeflip.clipboard">src.typeflip.clipboard</a>
 
   </div>
 
@@ -12084,7 +12230,7 @@ imported by:
   <a target="code" href="///D:/Project/BackEnd-TypeFlip/.venv/Lib/site-packages/win32/lib/win32con.py" type="text/plain"><tt>win32con</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imported by:
-    <a href="#src.typeflip.main">src.typeflip.main</a>
+    <a href="#src.typeflip.clipboard">src.typeflip.clipboard</a>
 
   </div>
 

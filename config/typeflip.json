@@ -1,5 +1,11 @@
 {
   "hotkey": "f12",
   "enabled": true,
-  "startup_enabled": false
+  "startup_enabled": false,
+  "always_on_top": false,
+  "auto_copy": false,
+  "window_x": null,
+  "window_y": null,
+  "window_width": 680,
+  "window_height": 520
 }
