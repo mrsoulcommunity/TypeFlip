@@ -5,9 +5,10 @@ import threading
 import tkinter as tk
 from tkinter import messagebox
 from pathlib import Path
+import webbrowser
 
 import pystray
-from PIL import Image, ImageDraw, ImageTk
+from PIL import Image, ImageDraw, ImageTk, ImageFilter
 
 from .config import (
     APP_NAME, VERSION,
@@ -37,13 +38,13 @@ class TypeFlipApp:
         self.root.overrideredirect(True)  # 🔥 Frameless!
         self.root.configure(bg=BG_PRIMARY)
 
-        # Restore geometry
+        # Restore geometry (check for None explicitly since x=0 or y=0 is valid)
         s = engine.settings
         w = s.get("window_width", 640)
         h = s.get("window_height", 480)
         x = s.get("window_x")
         y = s.get("window_y")
-        self.root.geometry(f"{w}x{h}+{x or 400}+{y or 200}")
+        self.root.geometry(f"{w}x{h}+{x if x is not None else 400}+{y if y is not None else 200}")
         self.root.minsize(480, 360)
 
         if engine.always_on_top:
@@ -189,16 +190,22 @@ class TypeFlipApp:
         tk.Label(footer, textvariable=self.log_var, bg=BG_PRIMARY,
                  fg=TEXT_MUTED, font=(FONT, 8)).pack(side="left")
 
-        # About
-        about_btn = tk.Label(footer, text="About", bg=BG_PRIMARY, fg=TEXT_MUTED,
-                              font=(FONT, 8), cursor="hand2")
-        about_btn.pack(side="right")
-        about_btn.bind("<Enter>", lambda e: about_btn.configure(fg=TEXT_PRIMARY))
-        about_btn.bind("<Leave>", lambda e: about_btn.configure(fg=TEXT_MUTED))
-        about_btn.bind("<Button-1>", lambda e: self._about())
+        # GitHub icon (drawn with PIL)
+        gh_img = self._make_github_icon()
+        self._gh_photo = ImageTk.PhotoImage(gh_img)  # keep reference
+        gh_btn = tk.Label(footer, image=self._gh_photo, bg=BG_PRIMARY, cursor="hand2")
+        gh_btn.pack(side="right", padx=(0, 2))
+        gh_btn.bind("<Button-1>", lambda e: webbrowser.open("https://github.com/mrsoulcommunity"))
+
+        # Telegram icon (drawn with PIL)
+        tg_img = self._make_telegram_icon()
+        self._tg_photo = ImageTk.PhotoImage(tg_img)
+        tg_btn = tk.Label(footer, image=self._tg_photo, bg=BG_PRIMARY, cursor="hand2")
+        tg_btn.pack(side="right", padx=(0, 2))
+        tg_btn.bind("<Button-1>", lambda e: webbrowser.open("http://t.me/mrsoul_community"))
 
         tk.Label(footer, text=f"v{VERSION}", bg=BG_PRIMARY, fg=TEXT_MUTED,
-                 font=(FONT, 8)).pack(side="right", padx=(0, 8))
+                 font=(FONT, 8)).pack(side="right", padx=(0, 6))
 
     # ─────────────────────────────────────────────
     #  HELPERS
@@ -274,8 +281,10 @@ class TypeFlipApp:
             self.count_var.set("0")
 
     def _on_focus_out(self, e=None):
+        if self._has_placeholder:
+            return
         text = self.source.get("1.0", "end-1c")
-        if not text.strip() or text == PLACEHOLDER:
+        if not text.strip():
             self._set_placeholder()
 
     def _toggle_enabled(self):
@@ -329,7 +338,7 @@ class TypeFlipApp:
     def _clear(self):
         self.source.delete("1.0", "end")
         self.source.configure(fg=TEXT_PRIMARY)
-        self._has_placeholder = False
+        self._has_placeholder = True
         self._set_placeholder()
         self.result.configure(state="normal")
         self.result.delete("1.0", "end")
@@ -353,11 +362,13 @@ class TypeFlipApp:
         if not result.strip() and not source.strip():
             self._log("Nothing to swap")
             return
+        # Clear placeholder if active
         if self._has_placeholder:
             self.source.delete("1.0", "end")
             self.source.configure(fg=TEXT_PRIMARY)
             self._has_placeholder = False
-        self.source.delete("1.0", "end")
+        else:
+            self.source.delete("1.0", "end")
         self.source.insert("1.0", result)
         self.source.configure(fg=TEXT_PRIMARY)
         self._has_placeholder = False
@@ -422,6 +433,39 @@ class TypeFlipApp:
         except:
             pass
 
+    # ── Social Icons ─────────────────────────────────────
+
+    def _make_github_icon(self):
+        """Draw a GitHub mark icon (16x16) using PIL."""
+        img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        # Octocat silhouette: circle body + cat ears
+        # Body
+        d.ellipse([2, 2, 14, 14], fill="#9d9da8")
+        # Cat ears (two triangles)
+        d.polygon([(4, 4), (6, 2), (6, 5)], fill="#9d9da8")
+        d.polygon([(12, 4), (10, 2), (10, 5)], fill="#9d9da8")
+        # Inner circle (face)
+        d.ellipse([5, 6, 11, 11], fill="#0f0f13")
+        # Eyes
+        d.ellipse([6, 7, 7, 8], fill="#9d9da8")
+        d.ellipse([9, 7, 10, 8], fill="#9d9da8")
+        # Mouth
+        d.arc([6, 8, 10, 11], 0, 180, fill="#9d9da8", width=1)
+        return img
+
+    def _make_telegram_icon(self):
+        """Draw a Telegram paper-plane icon (16x16) using PIL."""
+        img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        # Plane body
+        d.polygon([(2, 8), (13, 2), (10, 13), (7, 10)], fill="#9d9da8")
+        # Plane wing / tail
+        d.polygon([(7, 10), (10, 13), (8, 8)], fill="#7c7c88")
+        # Center dot
+        d.ellipse([5, 7, 7, 9], fill="#0f0f13")
+        return img
+
     # ─────────────────────────────────────────────
     #  TRAY
     # ─────────────────────────────────────────────
@@ -455,6 +499,11 @@ class TypeFlipApp:
         self.engine.set_enabled(not self.engine.enabled)
         self.enabled_var.set(self.engine.enabled)
         self._refresh_status()
+        # Schedule tray restart in main thread to avoid deadlock
+        self.root.after(100, self._restart_tray)
+
+    def _restart_tray(self):
+        """Restart the system tray icon (called from main thread)."""
         if self.tray_icon:
             try:
                 self.tray_icon.stop()

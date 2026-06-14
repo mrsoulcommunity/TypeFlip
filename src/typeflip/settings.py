@@ -65,7 +65,7 @@ class SettingsManager:
     def set(self, key: str, value) -> None:
         """Set a specific setting value and persist."""
         self._data[key] = value
-        self.save()
+        self.save(self._data)
 
     def get_all(self) -> dict:
         """Get all current settings as a dict."""

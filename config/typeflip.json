@@ -4,8 +4,8 @@
   "startup_enabled": false,
   "always_on_top": false,
   "auto_copy": false,
-  "window_x": null,
-  "window_y": null,
+  "window_x": 400,
+  "window_y": 200,
   "window_width": 680,
   "window_height": 520
 }

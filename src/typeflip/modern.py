@@ -173,6 +173,15 @@ class ToggleSwitch(tk.Canvas):
         self.bind("<Button-1>", self._toggle)
         self.configure(cursor="hand2")
 
+        # Watch for external variable changes
+        self._trace_id = self.var.trace_add("write", self._on_var_changed)
+
+    def _on_var_changed(self, *_):
+        new_state = self.var.get()
+        if new_state != self._state:
+            self._state = new_state
+            self._animate()
+
     def create_rounded_rect(self, x1, y1, x2, y2, r=8, **kwargs):
         points = [x1+r, y1, x2-r, y1, x2, y1, x2, y1+r,
                   x2, y2-r, x2, y2, x2-r, y2, x1+r, y2,
@@ -193,6 +202,14 @@ class ToggleSwitch(tk.Canvas):
         knob_x = 19 if self._state else 3
         self.itemconfig(self._bg_rect, fill=bg)
         self.coords(self._knob, knob_x, 3, knob_x+12, 15)
+
+    def destroy(self):
+        """Clean up trace on destroy."""
+        try:
+            self.var.trace_remove("write", self._trace_id)
+        except Exception:
+            pass
+        super().destroy()
 
     def refresh(self):
         self._state = self.var.get()

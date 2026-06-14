@@ -73,30 +73,39 @@ class TypeFlipEngine:
     # ── Hotkey Management ─────────────────────────────────
 
     def setup_hotkey(self) -> None:
-        """Register or re-register the global hotkey."""
+        """Register or re-register the global hotkey. Raises on failure."""
+        if self.hotkey_handle is not None:
+            try:
+                keyboard.remove_hotkey(self.hotkey_handle)
+            except Exception:
+                pass
         try:
-            if self.hotkey_handle is not None:
-                try:
-                    keyboard.remove_hotkey(self.hotkey_handle)
-                except Exception:
-                    pass
             self.hotkey_handle = keyboard.add_hotkey(
                 self.hotkey, self.trigger_conversion, suppress=False
             )
             logger.info(f"Global hotkey {self.hotkey.upper()} registered")
         except Exception as exc:
+            self.hotkey_handle = None
             logger.error(f"Hotkey registration failed: {exc}")
             self._notify_status("⚠️ Hotkey error")
+            raise
 
     def set_hotkey(self, hotkey: str) -> None:
-        """Change the global hotkey."""
+        """Change the global hotkey. Only persists on successful registration."""
         hotkey = (hotkey or "").strip().lower()
         if not hotkey:
             raise ValueError("Hotkey cannot be empty")
+        old_hotkey = self.hotkey
+        old_handle = self.hotkey_handle
         self.hotkey = hotkey
-        self.setup_hotkey()
-        self._persist()
-        self._notify_status()
+        try:
+            self.setup_hotkey()
+            self._persist()
+            self._notify_status()
+        except Exception:
+            self.hotkey = old_hotkey
+            self.hotkey_handle = old_handle
+            raise
 
     def set_enabled(self, enabled: bool) -> None:
         """Enable or disable the global hotkey listener."""
