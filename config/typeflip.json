@@ -1,4 +1,5 @@
 {
   "hotkey": "f12",
-  "enabled": true
+  "enabled": true,
+  "startup_enabled": false
 }
